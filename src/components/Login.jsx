@@ -8,28 +8,18 @@
 import { useState } from 'react'
 import { login } from '../api'
 
+const LOGO_URL = 'https://res.cloudinary.com/dol1ba0ld/image/upload/v1787954474/asd/Preguntale_a_UTNIA_xwocbf.png'
+
 function LogoUTNIA({ size = 48 }) {
   return (
-    <div
-      className="relative flex items-center justify-center rounded-full flex-shrink-0"
-      style={{
-        width: size,
-        height: size,
-        background: 'conic-gradient(from 200deg, #e8592e, #f2703f 30%, #0a0a0c 65%)',
-        padding: 2.5,
-      }}
-    >
-      <div className="w-full h-full rounded-full bg-[#0a0a0c] flex items-center justify-center">
-        <svg viewBox="0 0 24 24" width={size * 0.46} height={size * 0.46} fill="none">
-          <path
-            d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"
-            stroke="#f4f4f5"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-    </div>
+    <img
+      src={LOGO_URL}
+      alt="UTNIA"
+      width={size}
+      height={size}
+      className="rounded-full object-cover flex-shrink-0"
+      style={{ width: size, height: size }}
+    />
   )
 }
 
