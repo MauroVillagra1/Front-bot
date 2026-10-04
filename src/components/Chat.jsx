@@ -9,28 +9,19 @@ import MensajeBurbuja from './MensajeBurbuja'
 import Panel from './Panel'
 
 const ROLES_DISPLAY = {
-  root:           { label: 'Root',              color: 'bg-red-500/15 text-red-400' },
-  master:         { label: 'Master',            color: 'bg-[#e8592e]/15 text-[#f2894f]' },
-  administrativo: { label: 'Administrativo',    color: 'bg-sky-500/15 text-sky-400' },
-  jefe_area:      { label: 'Jefe de Área',      color: 'bg-emerald-500/15 text-emerald-400' },
-  docente:        { label: 'Docente',           color: 'bg-violet-500/15 text-violet-400' },
-  estudiante:     { label: 'Estudiante',        color: 'bg-gray-500/15 text-gray-400' },
-  // aliases legacy
-  administrador:     { label: 'Master',         color: 'bg-[#e8592e]/15 text-[#f2894f]' },
-  jefe_departamento: { label: 'Jefe de Área',   color: 'bg-emerald-500/15 text-emerald-400' },
-  profesor_directivo:{ label: 'Docente',        color: 'bg-violet-500/15 text-violet-400' },
-  profesor:          { label: 'Docente',        color: 'bg-violet-500/15 text-violet-400' },
-  alumno:            { label: 'Estudiante',     color: 'bg-gray-500/15 text-gray-400' },
+  ADMIN:   { label: 'Admin',     color: 'bg-[#e8592e]/15 text-[#f2894f]' },
+  MOD:     { label: 'Moderador', color: 'bg-sky-500/15 text-sky-400' },
+  MIEMBRO: { label: 'Miembro',   color: 'bg-gray-500/15 text-gray-400' },
 }
 
 const PREGUNTAS_EJEMPLO = [
-  '¿Cuál es el horario de AM1 en la comisión 1K01?',
-  '¿Qué materias tiene la comisión 2K03?',
-  '¿Cuándo es el próximo parcial de Física I?',
+  '¿Cuándo son las próximas mesas de examen?',
+  '¿Qué eventos organiza la carrera de Sistemas?',
+  '¿Cuándo abren las inscripciones?',
 ]
 
-const TIENE_PANEL = ['root', 'master', 'administrativo', 'jefe_area', 'docente',
-                     'administrador', 'jefe_departamento', 'profesor', 'profesor_directivo']
+// La UI solo oculta el acceso: los permisos reales se validan en el backend
+const TIENE_PANEL = ['MOD', 'ADMIN']
 
 function ahora() {
   return new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
@@ -52,7 +43,7 @@ function LogoUTNIA({ size = 36 }) {
   )
 }
 
-export default function Chat({ usuario = { nombre: 'Invitado', rol: 'alumno' }, onLogout = () => {} }) {
+export default function Chat({ usuario = { nombre: 'Invitado', rol: 'MIEMBRO' }, onLogout = () => {} }) {
   const [mensajes, setMensajes]             = useState([])
   const [input, setInput]                   = useState('')
   const [escribiendo, setEscribiendo]       = useState(false)
@@ -85,7 +76,10 @@ export default function Chat({ usuario = { nombre: 'Invitado', rol: 'alumno' }, 
       if (data.conversacion_id) setConversacionId(data.conversacion_id)
       setMensajes(prev => [
         ...prev,
-        { id: Date.now() + 1, tipo: 'asistente', texto: data.respuesta, timestamp: ahora() },
+        {
+          id: Date.now() + 1, tipo: 'asistente', texto: data.respuesta, timestamp: ahora(),
+          estado: data.estado, fuentes: data.fuentes ?? [], fecha: data.fecha_informacion,
+        },
       ])
     } catch (err) {
       let textoError = 'Ocurrió un error al procesar tu consulta. Intentá de nuevo.'
@@ -185,7 +179,7 @@ export default function Chat({ usuario = { nombre: 'Invitado', rol: 'alumno' }, 
               }`}
             >
               <LayoutDashboard size={15} className="flex-shrink-0" />
-              <span className="hidden md:block">Panel de carga</span>
+              <span className="hidden md:block">Panel</span>
             </button>
           </nav>
         )}
